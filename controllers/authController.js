@@ -72,6 +72,10 @@ const googleAuth = async (req, res) => {
       { expiresIn: process.env.JWT_TIMEOUT || '7d' }
     );
 
+    // NEW: include completeness signal and deviceId in response
+    const profileComplete =
+      !!user.role && (user.role !== 'student' || (!!user.rollNumber && !!user.deviceId));
+
     return res.status(200).json({
       user: {
         name: user.name,
@@ -79,8 +83,10 @@ const googleAuth = async (req, res) => {
         image: user.photoUrl,
         role: user.role,
         rollNumber: user.rollNumber,
+        deviceId: user.deviceId,
         department: user.department,
         semester: user.semester,
+        profileComplete,
       },
       token,
     });
@@ -127,6 +133,9 @@ const updateProfile = async (req, res) => {
       { new: true, runValidators: true }
     );
 
+    const profileComplete =
+      !!updated.role && (updated.role !== 'student' || (!!updated.rollNumber && !!updated.deviceId));
+
     return res.status(200).json({
       user: {
         name: updated.name,
@@ -134,8 +143,10 @@ const updateProfile = async (req, res) => {
         image: updated.photoUrl,
         role: updated.role,
         rollNumber: updated.rollNumber,
+        deviceId: updated.deviceId,
         department: updated.department,
         semester: updated.semester,
+        profileComplete,
       },
     });
   } catch (err) {
