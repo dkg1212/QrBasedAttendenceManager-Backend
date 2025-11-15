@@ -26,7 +26,7 @@ const courseSchema = new mongoose.Schema(
     semester: {
       type: String,
       required: true,
-      enum: ["Spring", "Fall", "Summer"],
+      enum: ["Spring", "Fall", "Autumn"],
     },
     year: {
       type: Number,
@@ -48,28 +48,28 @@ const courseSchema = new mongoose.Schema(
     location: {
       room: {
         type: String,
-        required: true,
+
       },
       building: {
         type: String,
-        required: true,
+
       },
       coordinates: {
         latitude: {
           type: Number,
-          required: true,
+
           min: -90,
           max: 90,
         },
         longitude: {
           type: Number,
-          required: true,
+
           min: -180,
           max: 180,
         },
         radius: {
           type: Number,
-          required: true,
+
           default: 50,
           min: 10,
           max: 500,

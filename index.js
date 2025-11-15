@@ -9,6 +9,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const sessionRoutes = require("./routes/sessionRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
+const courseRoutes = require("./routes/courseRoutes");
 
 
 const app = express();
@@ -21,10 +22,10 @@ app.use(cors({
 }));
 
 
-
 app.use('/auth', authRoutes);
 app.use("/session", sessionRoutes);
 app.use("/attendance", attendanceRoutes);
+app.use("/course", courseRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on ${process.env.PORT}`);
