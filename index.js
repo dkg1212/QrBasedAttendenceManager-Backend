@@ -7,6 +7,8 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
+const sessionRoutes = require("./routes/sessionRoutes");
+
 
 const app = express();
 connectDB();
@@ -20,6 +22,7 @@ app.use(cors({
 
 
 app.use('/auth', authRoutes);
+app.use("/session", sessionRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on ${process.env.PORT}`);
