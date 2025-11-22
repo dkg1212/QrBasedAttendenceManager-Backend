@@ -3,10 +3,13 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { oauth2Client } = require('../utils/googleClient');
 const User = require('../models/userModel');
+const logAction = require("../middleware/logAction");
+
 
 // Login with Google (auth-code flow), optional profile fields during first login
 const googleAuth = async (req, res) => {
   try {
+    
     const code = req.query.code;
     if (!code) {
       return res.status(400).json({ message: 'Authorization code missing' });
@@ -67,10 +70,20 @@ const googleAuth = async (req, res) => {
     );
 
     const token = jwt.sign(
+      
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_TIMEOUT || '7d' }
     );
+    await logAction({
+  userId: user._id,
+  action: "login",
+  entityType: "user",
+  entityId: user._id,
+  details: { outcome: "success" },
+  ip: req.ip,
+});
+
 
     // NEW: include completeness signal and deviceId in response
     const profileComplete =
@@ -92,6 +105,14 @@ const googleAuth = async (req, res) => {
     });
   } catch (err) {
     const status = err?.response?.status || 500;
+    await logAction({
+      userId: null,
+      action: "login",
+      entityType: "user",
+      entityId: null,
+      details: { outcome: "failure", error: err.message },
+      ip: req.ip,
+    });
     return res.status(status).json({
       message: 'Google authentication failed',
       error: err?.response?.data || err.message,

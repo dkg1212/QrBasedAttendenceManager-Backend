@@ -1,5 +1,7 @@
 const Course = require("../models/course");
 const User = require("../models/userModel");
+const logAction = require("../middleware/logAction");
+
 
 /**
  * Create a new course (teacher or admin)
@@ -27,6 +29,15 @@ exports.createCourse = async (req, res) => {
       location,
     });
 
+    await logAction({
+      userId: teacherId,
+      action: "course_created",
+      entityType: "course",
+      entityId: course._id,
+      details: { courseCode },
+      ip: req.ip,
+    });
+
     return res.status(201).json({
       message: "Course created successfully",
       course,
@@ -49,6 +60,15 @@ exports.updateCourse = async (req, res) => {
     });
 
     if (!updated) return res.status(404).json({ message: "Course not found" });
+
+    await logAction({
+      userId: req.user.id,
+      action: "course_updated",
+      entityType: "course",
+      entityId: updated._id,
+      details: req.body,
+      ip: req.ip,
+    });
 
     return res.status(200).json({
       message: "Course updated successfully",
@@ -82,6 +102,15 @@ exports.enrollStudent = async (req, res) => {
 
     course.enrolledStudents.push(studentId);
     await course.save();
+
+    await logAction({
+      userId: req.user.id,
+      action: "student_enrolled",
+      entityType: "course",
+      entityId: courseId,
+      details: { studentId },
+      ip: req.ip,
+    });
 
     return res.status(200).json({
       message: "Student enrolled successfully",

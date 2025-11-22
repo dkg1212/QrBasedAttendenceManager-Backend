@@ -2,6 +2,8 @@ const Attendance = require("../models/attendance");
 const Session = require("../models/session");
 const User = require("../models/userModel");
 const AuditLog = require("../models/auditLog");
+const logAction = require("../middleware/logAction");
+
 
 /**
  * Haversine formula for distance (in meters)
@@ -140,6 +142,14 @@ exports.markAttendance = async (req, res) => {
       outcome: "success",
       deviceId,
       location: { latitude, longitude },
+    });
+    await logAction({
+      userId: studentId,
+      action: "attendance_marked",
+      entityType: "attendance",
+      entityId: attendance._id,
+      details: { outcome: "success", distance },
+      ip: req.ip,
     });
 
     return res.status(200).json({

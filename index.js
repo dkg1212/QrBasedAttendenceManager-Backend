@@ -11,6 +11,8 @@ const sessionRoutes = require("./routes/sessionRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const reportRoutes = require("./routes/reportRoutes");
+const auditLogRoutes = require("./routes/auditLogRoutes");
+
 
 
 const app = express();
@@ -28,6 +30,7 @@ app.use("/session", sessionRoutes);
 app.use("/attendance", attendanceRoutes);
 app.use("/course", courseRoutes);
 app.use("/report", reportRoutes);
+app.use("/logs", auditLogRoutes);
 
 
 app.listen(process.env.PORT, () => {
